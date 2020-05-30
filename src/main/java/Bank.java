@@ -1,12 +1,34 @@
+import javax.validation.Constraint;
+import javax.validation.Validation;
+import javax.xml.validation.Validator;
+import java.lang.annotation.*;
 import java.util.ArrayList;
+import java.util.Random;
 
-public class Bank {
+public class Bank implements Annotation {
     String fourDigitId;
     private ArrayList<User> users = new ArrayList<User>();
     private ArrayList<Account> accounts = new ArrayList<Account>();
 
     public Bank(String fourDigitId) {
         this.fourDigitId = fourDigitId;
+    }
+
+    public String generateAccNo(){
+        char[] dgs = "1234567890".toCharArray();
+        StringBuilder sb = new StringBuilder(26);
+        Random random = new Random();
+        String accNo = "";
+        for (int i = 0; i < 20; i++) {
+            char c = dgs[random.nextInt(dgs.length)];
+            accNo+=(c);
+        }
+
+
+//        Validator validator = (Validator) Validation.buildDefaultValidatorFactory().getValidator();
+//        validator.validate(accNo);
+
+        return accNo;
     }
 
     void newCustomer(String name, String surname, Double balance) {
@@ -24,6 +46,11 @@ public class Bank {
                 ", users=" + users +
                 ", accounts=" + accounts +
                 '}';
+    }
+
+    @Override
+    public Class<? extends Annotation> annotationType() {
+        return null;
     }
 
     private static class User {
@@ -50,8 +77,13 @@ public class Bank {
     }
 
     private class Account {
+        @AccountNo(key = "Test me")
+
+        String accNo;
         User owner;
         Double balance;
+
+
 
         public Account(User owner, Double balance) {
             this.owner = owner;
